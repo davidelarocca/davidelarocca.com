@@ -1,0 +1,89 @@
+---
+// Homepage, direction 3b "Edits": white paper, one neon, the statement shown with its cuts.
+// Then the index of works (featured large, the rest quiet), Now, and the way out.
+import Base from '../layouts/Base.astro';
+import EditedStatement from '../components/edits/EditedStatement.astro';
+import FeaturedEntry from '../components/edits/FeaturedEntry.astro';
+import IndexRow from '../components/edits/IndexRow.astro';
+import VerifyRun from '../components/edits/VerifyRun.astro';
+import { person, works, type Work } from '../data/site';
+
+// Draft entries stay out until confirmed. Numbers follow the order entries
+// joined the index (oldest = 01) and never change; the list reads newest first.
+const published = works.filter((w) => !w.draft);
+const numberOf = new Map(
+  [...published].sort((a, b) => a.year - b.year).map((w, i) => [w.id, i + 1]),
+);
+const no = (w: Work) => numberOf.get(w.id)!;
+const featured = published.filter((w) => w.featured).sort((a, b) => no(a) - no(b));
+const rest = published.filter((w) => !w.featured).sort((a, b) => no(b) - no(a));
+---
+<Base>
+  <main id="main">
+    <EditedStatement />
+
+    <div class="grid intro">
+      <div class="right">
+        <p class="bio">{person.bio}</p>
+        <p class="thesis">{person.thesis}</p>
+        <p class="more"><a href="/background/">Background &amp; CV →</a></p>
+      </div>
+    </div>
+
+    <section class="index" aria-labelledby="index-title">
+      <div class="index-head">
+        <h2 id="index-title">Index <span class="count mono">{published.length} entries</span></h2>
+        <p class="aside">Kept, after the cuts.</p>
+      </div>
+      <ol class="entries">
+        {featured.map((w, i) => (
+          <FeaturedEntry work={w} number={no(w)} first={i === 0}>
+            {w.id === 'swift-harness' && <VerifyRun />}
+          </FeaturedEntry>
+        ))}
+        {rest.map((w) => <IndexRow work={w} number={no(w)} />)}
+      </ol>
+    </section>
+
+    <section class="grid now" aria-labelledby="now-title">
+      <h2 id="now-title">Now</h2>
+      <ul class="right">{person.now.map((n) => <li>{n}</li>)}</ul>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .intro { margin-top: clamp(56px, 7vw, 88px); }
+  .bio { max-width: 34em; font-size: 21px; line-height: 1.5; text-wrap: pretty; }
+  .thesis {
+    max-width: 22em;
+    margin-top: 20px;
+    font-size: clamp(24px, 2.4vw, 30px);
+    font-style: italic;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+  .more { margin-top: 20px; }
+
+  .index { margin-top: clamp(96px, 11vw, 144px); }
+  .index-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 4px 32px;
+    padding-bottom: 14px;
+  }
+  h2 { font-size: 16px; font-weight: 500; }
+  .count { margin-left: 8px; font-weight: 400; font-size: 12px; color: var(--muted); }
+  .aside { font-size: 15px; font-style: italic; color: var(--muted); }
+  .entries { border-bottom: 1px solid var(--rule); }
+
+  .now { margin-top: 96px; }
+  .now h2 { grid-column: 1 / span 3; }
+  .now li { padding: 3px 0; }
+
+  @media (max-width: 820px) {
+    .now h2 { grid-column: 1 / -1; margin-bottom: 8px; }
+  }
+</style>

@@ -1,0 +1,52 @@
+---
+import '@fontsource-variable/newsreader/opsz.css';
+import '@fontsource-variable/newsreader/opsz-italic.css';
+import '@fontsource/fragment-mono/400.css';
+import '../styles/base.css';
+import { person, elsewhere } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title, description = person.bio } = Astro.props;
+const fullTitle = title ? `${title} · ${person.name}` : person.name;
+const isHome = Astro.url.pathname === '/';
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+// Links without a real address yet (Substack, Medium) stay out until they have one.
+const links = elsewhere.filter((l) => !l.href.startsWith('#'));
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Interactive parts appear only when scripts run; without them everything is readable. -->
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="page">
+      <header class="masthead">
+        {isHome ? <span>{person.name}</span> : <a href="/">{person.name}</a>}
+        <span class="mono">last edited <time datetime={person.updated}>{person.updated}</time></span>
+      </header>
+      <slot />
+      <footer class="grid colophon">
+        <nav aria-label="Elsewhere">
+          {links.map((l) => <a href={l.href}>{l.label}</a>)}
+        </nav>
+        <p class="right">Set in Newsreader and Fragment Mono, edited in fluoro orange. The cuts stay visible on purpose.</p>
+      </footer>
+    </div>
+  </body>
+</html>
