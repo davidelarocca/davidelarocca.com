@@ -23,7 +23,17 @@ const external = work.href?.startsWith('http');
     {work.credit && <p class="credit">{work.credit}</p>}
     {fields.length > 0 && (
       <dl>
-        {fields.map(([k, v]) => <><dt class="label">{k}</dt><dd>{v}</dd></>)}
+        {fields.map(([k, v]) => (
+          <>
+            <dt class="label">{k}</dt>
+            <dd>
+              {v}
+              {k === 'Outcome' && work.outcomeLink && (
+                <> <a href={work.outcomeLink.href} rel="noopener">{work.outcomeLink.label}</a><span class="out-sm" aria-hidden="true">↗</span></>
+              )}
+            </dd>
+          </>
+        ))}
       </dl>
     )}
     {work.citation && (
@@ -69,6 +79,7 @@ const external = work.href?.startsWith('http');
   dl { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 8px 18px; max-width: 44rem; margin-top: 24px; }
   dt { padding-top: 4px; }
   dd { font-size: 18px; text-wrap: pretty; }
+  .out-sm { margin-left: 0.15em; font-size: 0.8em; }
   .cite {
     display: grid;
     grid-template-columns: 96px minmax(0, 1fr);

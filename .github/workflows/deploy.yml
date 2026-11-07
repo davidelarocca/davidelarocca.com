@@ -1,5 +1,4 @@
-# Build the Astro site and publish it to GitHub Pages on every push to main,
-# and when release-watch.yml finds a newer Swift Harness release.
+# Build the Astro site and publish it to GitHub Pages on every push to main.
 name: Deploy to GitHub Pages
 
 on:
@@ -27,9 +26,6 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-        env:
-          # Read the latest Swift Harness release without the anonymous rate limit.
-          GITHUB_TOKEN: ${{ github.token }}
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:

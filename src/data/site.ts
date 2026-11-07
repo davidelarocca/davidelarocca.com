@@ -1,5 +1,4 @@
 // Single source of content for the site: the log on the homepage and the background page.
-import { swiftHarnessVersion } from './releases';
 
 export type ThreadId = 'real' | 'systems' | 'culture';
 
@@ -29,6 +28,8 @@ export interface Work {
   question?: string;
   method?: string;
   outcome?: string;
+  /** A link shown after the outcome, e.g. the latest release. */
+  outcomeLink?: { label: string; href: string };
   /** Margin note: a short personal annotation beside the work, like pencil in a book. Draft copy. */
   note?: string;
   /** Full reference, for published work. */
@@ -134,7 +135,8 @@ export const works: Work[] = [
       'Structure for AI-assisted native Apple development: a reuse-first SwiftUI design-system workflow and automatic quality gates for format, lint, build and test.',
     question: 'AI writes code faster than anyone can review it. What keeps it consistent and honest?',
     method: 'Design-system rules, reuse checks and quality gates that run on every change.',
-    outcome: `Open-source plugin, release ${swiftHarnessVersion}. Now measuring what each check catches; iOS comes after.`,
+    outcome: 'Open-source plugin, released often. Now measuring what each check catches; iOS comes after.',
+    outcomeLink: { label: 'Latest release', href: 'https://github.com/davidelarocca/swift-harness/releases/latest' },
     note: 'structure is what makes speed trustworthy',
     href: 'https://github.com/davidelarocca/swift-harness',
   },
